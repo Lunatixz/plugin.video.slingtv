@@ -23,7 +23,7 @@ import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
                             
 from simplecache import SimpleCache, use_cache
 from resources.lib.globals import *
-from login import UserClient
+from .login import UserClient
 
 socket.setdefaulttimeout(TIMEOUT)
 class SlingTV(object):
