@@ -64,8 +64,8 @@ class SlingTV(object):
             
     def buildMenu(self):
         response = self.getURL(MAIN_URL)
-        self.addDir(LANGUAGE(30015), '', 'live')
-        self.addDir(LANGUAGE(30017), '', 'vod')
+        self.addDir(LANGUAGE(30015), '', 'live') # Channels
+        self.addDir(LANGUAGE(30017), '', 'vod') # On Demand
         for item in response:
             # Omit Rentals for the time being
             if item['title'].lower() == 'rentals': continue
@@ -687,47 +687,88 @@ class SlingTV(object):
         xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]),url=u,listitem=liz,isFolder=True)
 
     
-    def getLineup(self, days=1):
-        return []
+    def getSchedule(self, channel):
+        if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
+            log('getSchedule, skipping channel with no linear schedule: ' + str(self.getChannelName(channel)))
+            return {} # don't request schedule for this channel
+        utcdate = datetime.datetime.utcnow().strftime("%y%m%d") + '0000'
+        scheduleURL = '%s/cms/publish3/channel/schedule/24/%s/1/{}.json' % \
+                      (self.endPoints['environments']['production']['cms_url'], utcdate)
+        scheduleURL = scheduleURL.format(channel['channel_guid'])
+        response = self.getURL(scheduleURL)
+        if response and 'schedule' in response:
+            return response['schedule']
+        else:
+            return {}
+
     
-    
+    #support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
     def uEPG(self):
         log('uEPG')
-        #support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
         channels = self.getChannels()
-        lineups  = self.getLineup()
-        return poolList(self.buildGuide, [(idx + 1, channel, lineups) for idx, channel in enumerate(channels)])
+        return poolList(self.buildGuide, [(idx + 1, channel, self.getSchedule(channel)) for idx, channel in enumerate(channels)])
         
+
+    def getChannelName(self, channel):
+        chmeta = channel.get('metadata',{})
+        chname = (chmeta.get('channel_name','') or chmeta.get('title','') or chmeta.get('call_sign',''))
+        return chname
         
+
     def buildGuide(self, data):
-        chnum, channel, listings = data
-        meta       = channel['metadata']
-        chname     = (meta.get('channel_name','') or meta.get('title','') or meta.get('call_sign',''))
-        link       = channel['qvt_url']
-        chlogo     = (meta.get('thumbnail_cropped',{}).get('url','') or ICON)
-        newChannel = {}
-        guidedata  = []
-        newChannel['channelname']   = chname
-        newChannel['channelnumber'] = chnum
-        newChannel['channellogo']   = chlogo
-        newChannel['isfavorite']    = random.choice([True, False])
-        #dummy info for testing
-        starttime  = time.time()
-        for listing in range(24):
-            label  = chname
-            thumb  = (channel.get('thumbnail',{}).get('url','') or chlogo or ICON)
-            fanart = (meta.get('default_schedule_image',{}).get('url','') or FANART)
-            plot   = 'Plot Placeholder'
-            genre  = meta.get('genre','')
-            dur    = random.choice([1800,3600,7200])
-            starttime = starttime + dur
-            tmpdata = {"mediatype":"episode","label":label ,"title":label,"plot":plot,"duration":dur,"genre":genre}
-            tmpdata['url'] = self.sysARG[0]+'?mode=play&name=%s&url=%s'%(label,link)
-            tmpdata['starttime'] = starttime
-            tmpdata['art'] = {"thumb":thumb,"poster":thumb,"fanart":FANART,"icon":chlogo,"clearlogo":chlogo}
-            guidedata.append(tmpdata)
-        newChannel['guidedata'] = guidedata
-        return newChannel        
+        chnum, channel, schedule = data
+        chname = self.getChannelName(channel)
+        if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
+            log('buildGuide, skipping channel with no linear schedule: ' + str(chname))
+            return None # don't display this channel in the guide since it's on-demand only
+        chmeta = channel['metadata']
+        link   = channel['qvt_url']
+        chlogo = (chmeta.get('thumbnail_cropped',{}).get('url','') or ICON)
+        thumb  = (channel.get('thumbnail',{}).get('url','') or chlogo or ICON)
+        fanart = (chmeta.get('default_schedule_image',{}).get('url','') or FANART)
+        url    = self.sysARG[0]+'?mode=play&name=%s&url=%s'%(chname, link)
+        art = {
+            'thumb': thumb,
+            'poster': thumb,
+            'fanart': FANART,
+            'icon': chlogo,
+            'clearlogo': chlogo
+        }
+        guidedata = []
+        for scheduleList in schedule['scheduleList']:
+            metadata = scheduleList.get('metadata',{})
+            program = scheduleList.get('program',{})
+            guidedata.append({
+                'mediatype': program.get('type',''),
+                'label': scheduleList.get('title',''),
+                'title': scheduleList.get('title',''),
+                'plot': metadata.get('description',''),
+                'duration': float(scheduleList['duration']),
+                'genre': metadata.get('genre',''),
+                'url': url,
+                'starttime': float(scheduleList['schedule_start']),
+                'art': art
+            })
+        if len(guidedata) < 1:
+            log('buildGuide, no guide data for channel: ' + str(chname))
+            guidedata.append({
+                'mediatype': 'episode',
+                'label': chname,
+                'title': chname,
+                'plot': '',
+                'duration': float(86400), # 24 hours
+                'genre': chmeta.get('genre',''),
+                'url': url,
+                'starttime': (datetime.datetime.combine(datetime.datetime.today(), datetime.time.min) - datetime.datetime(1970, 1, 1)).total_seconds(), # last midnight
+                'art': art
+            })
+        return {
+            'channelname': chname,
+            'channelnumber': chnum,
+            'channellogo': chlogo,
+            'isfavorite': False,
+            'guidedata': guidedata
+        }
     
     
     def getParams(self):
