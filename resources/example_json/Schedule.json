@@ -1,0 +1,426 @@
+{
+  "schedule": {
+    "dfp_enable": false,
+    "lookback_minutes": 0,
+    "verified_play": true,
+    "ott_mapping_id": null,
+    "effective_live_delay": 38,
+    "call_sign": "FS1HD",
+    "allow_seeking": true,
+    "live_max_age": null,
+    "title": "FS1HD",
+    "live_delay": 38,
+    "service_partner_ids": [
+      {
+        "fs2go": "FS1"
+      },
+      {
+        "SlingSSO": "FS1"
+      }
+    ],
+    "id": 809,
+    "playback_delay": 38,
+    "ad_decision_service": null,
+    "subtype": "move",
+    "comscore_enable": true,
+    "type": "channel",
+    "thumbnail": {
+      "url": "http://p-img.movetv.com/cms/images/ec4e8e9c3e25fca2935c6e50d2157de988897eb3.png",
+      "h": 600,
+      "w": 1230
+    },
+    "metadata": {
+      "language": "English",
+      "channel_name": "FOX Sports 1",
+      "svod_allow_seek_past_furthest_pos": true,
+      "default_schedule_image": {
+        "url": "http://p-img.movetv.com/cms/images/e22d2b60f76c9b1cc61c76510f562f736f5af6b1.png",
+        "h": 625,
+        "w": 833
+      },
+      "prg_svc_id": "82547",
+      "thumbnail_cropped": {
+        "url": "http://p-img.movetv.com/cms/images/ec4e8e9c3e25fca2935c6e50d2157de988897eb3.png",
+        "h": 600,
+        "w": 1230
+      },
+      "restricted_devices": [
+        "comcast"
+      ],
+      "lookback_allow_seek_past_furthest_pos": false,
+      "genre": [
+        "Sports"
+      ],
+      "recordable": true
+    },
+    "nielsen_enable": true,
+    "dai_vod_enable": false,
+    "nielsen": {
+
+    },
+    "network_affiliate_name": "Fox Sports",
+    "channel_guid": "0c6964d26bcd450cb7d8c8af10b9da20",
+    "timeshiftable": false,
+    "offered": true,
+    "visibility": {
+      "visible": true
+    },
+    "last_modified": "2019-02-13T16:02:47Z",
+    "adult": false,
+    "concurrency_service": "UMS",
+    "last_scheduled_program_time": "2019-04-22T23:00:00Z",
+    "dai_info": {
+      "channel_name": "fox_sports",
+      "on_shorted_ad_break": "truncate",
+      "programmer_network_id": "116450",
+      "ads_service_url": "http://p-adapt.movetv.com/http://5d40b.s.fwmrm.net/ad/g/1"
+    },
+    "ad_gap_url": null,
+    "schedule_offset": 0,
+    "qvt_url": "http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/0c6964d26bcd450cb7d8c8af10b9da20/schedule/now/playback_info.qvt",
+    "comscore": {
+      "c2": "17817715",
+      "publisher": "FOX"
+    },
+    "featured_on_packs": false,
+    "dai_linear_enable": true,
+    "source_id": 726,
+    "min_buffer": 0,
+    "external_id": "0c6964d26bcd450cb7d8c8af10b9da20",
+    "scheduleList": [
+      {
+        "vod": "false",
+        "duration": 9000.0,
+        "id": 38211967,
+        "title": "Sporting KC vs. New York Red Bulls",
+        "state": 2,
+        "program": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "background_image": {
+            "url": "http://p-img.movetv.com/cms/images/28d49428dabdcb1255ab94ef1bedb0571826aae6.jpg",
+            "h": 1494,
+            "w": 2656
+          },
+          "name": "Sporting KC vs. New York Red Bulls",
+          "teams": [
+
+          ],
+          "recording_scope": "multiple",
+          "id": 1839626,
+          "franchise_id": 471571,
+          "guid": "acb35b3c8bd148bc813b6fed29ee398a",
+          "type": "sport",
+          "thumbnail": null,
+          "franchise_guid": "4e167daf3209428ab86f8b14d1c4d690"
+        },
+        "ingested": 1555282800.0,
+        "thumbnail": {
+          "url": "http://p-img.movetv.com/cms/images/28d49428dabdcb1255ab94ef1bedb0571826aae6.jpg",
+          "h": 1494,
+          "type": "program",
+          "w": 2656
+        },
+        "metadata": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "primetime": false,
+          "release_year": 2019,
+          "new_episode": true,
+          "episode_title": "Sporting KC vs. New York Red Bulls",
+          "genre": [
+            "soccer",
+            "pro",
+            "regular season"
+          ],
+          "description": "Sporting KC vs. New York Red Bulls. From Children's Mercy Park."
+        },
+        "grid_title": "MLS Soccer",
+        "series_sequence": null,
+        "schedule_stop": "1555291800.000",
+        "timeshiftable": true,
+        "expires": 1556155800.0,
+        "visibility": {
+          "visible": "True"
+        },
+        "source_id": 726,
+        "last_modified": "2019-04-07T13:08:21Z",
+        "adult": false,
+        "schedule_start": "1555282800.000",
+        "release_year": 2019,
+        "qvt_url": "http://cbd46b77.cdn.cms.movetv.com/cms/publish3/container/scheduleqvt/788be3a6507c4a4bbf92fe1c88c3968c.qvt",
+        "created": "2019-04-06T13:14:27Z",
+        "schedule_guid": "788be3a6507c4a4bbf92fe1c88c3968c",
+        "external_id": "0a70705497f643a2bd13c2668d6bf4ab",
+        "vendor_content_id": "dfc15632332dc1ef5d1c5791af2e4fbf"
+      },
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {
+        "vod": "false",
+        "duration": 3600.0,
+        "id": 38291130,
+        "title": "Lock It In",
+        "state": 0,
+        "program": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "background_image": {
+            "url": "http://p-img.movetv.com/cms/images/eaf5acd7a582af148d97e5abdd319ae24654f17d.jpg",
+            "h": 1215,
+            "w": 2160
+          },
+          "episode_season": 2019,
+          "name": "Lock It In",
+          "episode_number": 61,
+          "franchise_id": 424353,
+          "season_id": 57951,
+          "recording_scope": "multiple",
+          "id": 1844093,
+          "guid": "fa40adf10ebf4e4482a7ec84afb60600",
+          "type": "episode",
+          "thumbnail": null,
+          "franchise_guid": "ba993d00f661475d812c74bee1fa525a"
+        },
+        "ingested": 1555360200.0,
+        "thumbnail": {
+          "url": "http://p-img.movetv.com/cms/images/eaf5acd7a582af148d97e5abdd319ae24654f17d.jpg",
+          "h": 1215,
+          "type": "program",
+          "w": 2160
+        },
+        "metadata": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "episode_season": 2019,
+          "release_year": 2019,
+          "new_episode": true,
+          "primetime": false,
+          "genre": [
+            "sport",
+            "sports stuff"
+          ],
+          "episode_number": 61,
+          "description": "A look at sports betting with Rachel Bonnetta, \"Cousin Sal\" Iacono, Todd Fuhrman and Clay Travis."
+        },
+        "grid_title": "Lock It In",
+        "series_sequence": null,
+        "schedule_stop": "1555363800.000",
+        "timeshiftable": true,
+        "expires": 1556227800.0,
+        "visibility": {
+          "visible": "True"
+        },
+        "source_id": 726,
+        "last_modified": "2019-04-09T12:45:56Z",
+        "adult": false,
+        "schedule_start": "1555360200.000",
+        "release_year": 2019,
+        "qvt_url": "http://cbd46b77.cdn.cms.movetv.com/cms/publish3/container/scheduleqvt/c8b54dba38a947d0afaff84679255944.qvt",
+        "created": "2019-04-09T12:45:07Z",
+        "schedule_guid": "c8b54dba38a947d0afaff84679255944",
+        "external_id": "f28dcd780cdc4a41a8f5bc68bc8153c7",
+        "vendor_content_id": "de00b5d1957c94bb60b89d41eaedcfe3"
+      },
+      {
+        "vod": "false",
+        "duration": 1800.0,
+        "id": 38414261,
+        "title": "Fair Game with Kristine Leahy",
+        "state": 0,
+        "program": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "background_image": {
+            "url": "http://p-img.movetv.com/cms/images/9dabb7bac8132de46b192e394df2e4f439d6e52e.jpg",
+            "h": 1080,
+            "w": 1920
+          },
+          "name": "Gilbert Arenas Part 1",
+          "franchise_id": 434748,
+          "recording_scope": "multiple",
+          "id": 1852186,
+          "guid": "360f81697ae246aab2ccb168d7098c8a",
+          "type": "program",
+          "thumbnail": null,
+          "franchise_guid": "75f50148161345889b4759ac34e0e23c"
+        },
+        "ingested": 1555363800.0,
+        "thumbnail": {
+          "url": "http://p-img.movetv.com/cms/images/9dabb7bac8132de46b192e394df2e4f439d6e52e.jpg",
+          "h": 1080,
+          "type": "program",
+          "w": 1920
+        },
+        "metadata": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "primetime": false,
+          "release_year": 2019,
+          "new_episode": true,
+          "episode_title": "Gilbert Arenas Part 1",
+          "genre": [
+            "sport",
+            "sports stuff",
+            "interview",
+            "basketball"
+          ],
+          "description": "Former NBA All-Star Gilbert Arenas opens up about his outrageous contract; advice he'd give LeBron James; and the locker room incident that shocked the NBA and led to his suspension."
+        },
+        "grid_title": "Fair Game with",
+        "series_sequence": null,
+        "schedule_stop": "1555365600.000",
+        "timeshiftable": true,
+        "expires": 1556229600.0,
+        "visibility": {
+          "visible": "True"
+        },
+        "source_id": 726,
+        "last_modified": "2019-04-14T13:04:42Z",
+        "adult": false,
+        "schedule_start": "1555363800.000",
+        "release_year": 2019,
+        "qvt_url": "http://cbd46b77.cdn.cms.movetv.com/cms/publish3/container/scheduleqvt/8212eb6624ce4275908678b30122474e.qvt",
+        "created": "2019-04-13T13:23:48Z",
+        "schedule_guid": "8212eb6624ce4275908678b30122474e",
+        "external_id": "7645cc309a2b4b01b98793cf87b43db9",
+        "vendor_content_id": "1ab1cf8010d2165dc367227be39a276f"
+      },
+      {
+        "vod": "false",
+        "duration": 3600.0,
+        "id": 38291131,
+        "title": "NASCAR Race Hub",
+        "state": 0,
+        "program": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "background_image": {
+            "url": "http://p-img.movetv.com/cms/images/e842df878d47e6c0dea74196a274963f65e00eaa.jpg",
+            "h": 819,
+            "w": 1456
+          },
+          "name": "NASCAR Race Hub",
+          "franchise_id": 201643,
+          "recording_scope": "multiple",
+          "id": 1844094,
+          "guid": "50965e6b7a974cb8a822a36498c45451",
+          "type": "program",
+          "thumbnail": null,
+          "franchise_guid": "853be257e8db4de68bac33f9ef81641b"
+        },
+        "ingested": 1555365600.0,
+        "thumbnail": {
+          "url": "http://p-img.movetv.com/cms/images/e842df878d47e6c0dea74196a274963f65e00eaa.jpg",
+          "h": 819,
+          "type": "program",
+          "w": 1456
+        },
+        "metadata": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "primetime": false,
+          "release_year": 2019,
+          "new_episode": true,
+          "genre": [
+            "motor sports",
+            "motor sport",
+            "sports stuff",
+            "talk"
+          ],
+          "description": "Daily motor-sports discussion and interviews from the \"hub\" of NASCAR in Charlotte."
+        },
+        "grid_title": "NASCAR Race Hub",
+        "series_sequence": null,
+        "schedule_stop": "1555369200.000",
+        "timeshiftable": true,
+        "expires": 1556233200.0,
+        "visibility": {
+          "visible": "True"
+        },
+        "source_id": 726,
+        "last_modified": "2019-04-10T13:26:42Z",
+        "adult": false,
+        "schedule_start": "1555365600.000",
+        "release_year": 2019,
+        "qvt_url": "http://cbd46b77.cdn.cms.movetv.com/cms/publish3/container/scheduleqvt/1fd6d1052e7d41ed8b88b52fcfc49a76.qvt",
+        "created": "2019-04-09T12:45:08Z",
+        "schedule_guid": "1fd6d1052e7d41ed8b88b52fcfc49a76",
+        "external_id": "cebdfdf7ebe04004ac57474cd5a4e287",
+        "vendor_content_id": "069d5fd341ffa4d9edb202a3a4700a3f"
+      },
+      {
+        "vod": "false",
+        "duration": 3600.0,
+        "id": 38320843,
+        "title": "NHRA in 60",
+        "state": 0,
+        "program": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "background_image": null,
+          "name": "Houston",
+          "franchise_id": 473093,
+          "recording_scope": "multiple",
+          "id": 1839625,
+          "guid": "42d5f9f594e949f2a11d70625fa11f8b",
+          "type": "program",
+          "thumbnail": null,
+          "franchise_guid": "ce8341bde179498ea8b9ae8de84f85d0"
+        },
+        "ingested": 1555369200.0,
+        "thumbnail": {
+          "url": "http://p-img.movetv.com/cms/images/e22d2b60f76c9b1cc61c76510f562f736f5af6b1.png",
+          "h": 625,
+          "type": "channel",
+          "w": 833
+        },
+        "metadata": {
+          "ratings": [
+            "US_MPAA_UR"
+          ],
+          "primetime": false,
+          "release_year": 2019,
+          "new_episode": false,
+          "episode_title": "Houston",
+          "description": "A condensed NHRA replay of the SpringNationals from Houston Raceway Park."
+        },
+        "grid_title": "NHRA in 60",
+        "series_sequence": null,
+        "schedule_stop": "1555372800.000",
+        "timeshiftable": true,
+        "expires": 1556236800.0,
+        "visibility": {
+          "visible": "True"
+        },
+        "source_id": 726,
+        "last_modified": "2019-04-13T13:24:29Z",
+        "adult": false,
+        "schedule_start": "1555369200.000",
+        "release_year": 2019,
+        "qvt_url": "http://cbd46b77.cdn.cms.movetv.com/cms/publish3/container/scheduleqvt/8c46243520714070a8a7fe145d92082f.qvt",
+        "created": "2019-04-10T13:25:40Z",
+        "schedule_guid": "8c46243520714070a8a7fe145d92082f",
+        "external_id": "7cb66024bcb8455e92411cab3d200c3c",
+        "vendor_content_id": "eb0820c5218a7ab2dac3e51b5610e737"
+      }
+    ]
+  }
+}

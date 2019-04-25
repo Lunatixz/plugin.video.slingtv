@@ -1,0 +1,65 @@
+{
+  "title": "MY TV",
+  "thumbnail": {
+    "url": "http://webapp.movetv.com/config/shared/images/mytv-icon.png",
+    "h": 177,
+    "w": 207
+  },
+  "id": "my_tv"
+},
+{
+   'url':'http://p-mgcs.movetv.com/rubens-online/rest/v1/dma/{{dma}}/offset/{{timezone_offset}}/domain/{{domain}}/product/{{product}}/platform/{{platform}}/context/on_now/ribbons?page_size={{page_size}}&sub_pack_ids={{subscription_pack_ids}}&legacy_sub_pack_ids={{legacy_subscription_pack_ids}}',
+   'title':'ON NOW',
+   'thumbnail':{
+      'url':'http://webapp.movetv.com/config/shared/images/on-now-icon.png',
+      'h':156,
+      'w':222
+   },
+   'id':'on_now'
+},
+{
+   'title':'GUIDE',
+   'thumbnail':{
+      'url':'http://webapp.movetv.com/config/shared/images/guide-icon.png',
+      'h':153,
+      'w':195
+   },
+   'id':'guide'
+},
+{
+   'url':'http://p-mgcs.movetv.com/rubens-online/rest/v1/dma/{{dma}}/offset/{{timezone_offset}}/domain/{{domain}}/product/{{product}}/platform/{{platform}}/context/sports/ribbons?page_size={{page_size}}&sub_pack_ids={{subscription_pack_ids}}&legacy_sub_pack_ids={{legacy_subscription_pack_ids}}',
+   'title':'SPORTS',
+   'thumbnail':{
+      'url':'http://webapp.movetv.com/config/shared/images/sports-icon.png',
+      'h':180,
+      'w':180
+   },
+   'id':'sports'
+},
+{
+   'title':'RENTALS',
+   'thumbnail':{
+      'url':'http://webapp.movetv.com/config/shared/images/movies-icon.png',
+      'h':180,
+      'w':210
+   },
+   'id':'movies'
+},
+{
+   'title':'SEARCH',
+   'thumbnail':{
+      'url':'http://webapp.movetv.com/config/shared/images/search-icon.png',
+      'h':150,
+      'w':150
+   },
+   'id':'search'
+},
+{
+   'title':'SETTINGS',
+   'thumbnail':{
+      'url':'http://webapp.movetv.com/config/shared/images/settings-icon.png',
+      'h':156,
+      'w':156
+   },
+   'id':'settings'
+}

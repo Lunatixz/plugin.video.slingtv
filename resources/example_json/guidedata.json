@@ -1,0 +1,464 @@
+{
+  "guidedata": [
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555296306.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555299906.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555303506.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555307106.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555314306.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555317906.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555319706.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555321506.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555328706.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555332306.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555335906.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555343106.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555346706.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555350306.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555352106.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555359306.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555362906.252,
+      "duration": 3600
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555370106.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555377306.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555384506.252,
+      "duration": 7200
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555386306.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555388106.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555389906.252,
+      "duration": 1800
+    },
+    {
+      "plot": "Plot Placeholder",
+      "art": {
+        "fanart": "C:\\Users\\ryanm\\AppData\\Roaming\\Kodi\\addons\\plugin.video.slingtv\\resources\\images\\fanart.jpg",
+        "poster": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "clearlogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "thumb": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'",
+        "icon": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+      },
+      "title": "'FX'",
+      "url": "'plugin:         //plugin.video.slingtv/?mode=play&name=FX&url=http://cbd46b77.cdn.cms.movetv.com/cms/api/channels/2f5c3abe53004a3db6b236739c12a955/schedule/now/playback_info.qvt'",
+      "mediatype": "episode",
+      "label": "'FX'",
+      "genre": [
+        "'Entertainment'"
+      ],
+      "starttime": 1555391706.252,
+      "duration": 1800
+    }
+  ],
+  "channelname": "'FX'",
+  "isfavorite": "False",
+  "channelnumber": 1,
+  "channellogo": "'http://p-img.movetv.com/cms/images/e35349d52b234affb1f0fa97e21bf96980064ab9.png'"
+}
