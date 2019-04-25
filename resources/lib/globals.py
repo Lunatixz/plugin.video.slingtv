@@ -30,8 +30,6 @@ try:
     ENABLE_POOL = True
 except: ENABLE_POOL = False
 
-ENABLE_POOL = False # just for testing!!!
-
 # Plugin Info
 ADDON_ID      = 'plugin.video.slingtv'
 REAL_SETTINGS = xbmcaddon.Addon(id=ADDON_ID)
