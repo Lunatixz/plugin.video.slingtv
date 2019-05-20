@@ -689,12 +689,13 @@ class SlingTV(object):
     
     def getSchedule(self, channel):
         if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
-            log('getSchedule, skipping channel with no linear schedule: ' + str(self.getChannelName(channel)))
+            log('getSchedule, skipping channel with no linear schedule: ' + self.getChannelName(channel))
             return {} # don't request schedule for this channel
         utcdate = datetime.datetime.utcnow().strftime("%y%m%d") + '0000'
         scheduleURL = '%s/cms/publish3/channel/schedule/24/%s/1/{}.json' % \
                       (self.endPoints['environments']['production']['cms_url'], utcdate)
         scheduleURL = scheduleURL.format(channel['channel_guid'])
+        log('getSchedule, calling getURL for ' + str(self.getChannelName(channel)))
         response = self.getURL(scheduleURL)
         if response and 'schedule' in response:
             return response['schedule']
@@ -715,12 +716,17 @@ class SlingTV(object):
         return chname
         
 
+    def getTimeForLog(self, time):
+        return datetime.datetime.fromtimestamp(time).strftime("%a %H:%M")
+
+
     def buildGuide(self, data):
         chnum, channel, schedule = data
         chname = self.getChannelName(channel)
+        log('buildGuide for channel: ' + chname)
         if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
-            log('buildGuide, skipping channel with no linear schedule: ' + str(chname))
-            return None # don't display this channel in the guide since it's on-demand only
+            log('buildGuide, on demand only')
+            return None
         chmeta = channel['metadata']
         link   = channel['qvt_url']
         chlogo = (chmeta.get('thumbnail_cropped',{}).get('url','') or ICON)
@@ -730,38 +736,53 @@ class SlingTV(object):
         art = {
             'thumb': thumb,
             'poster': thumb,
-            'fanart': FANART,
+            'fanart': fanart,
             'icon': chlogo,
             'clearlogo': chlogo
         }
+        currenttime = time.time()
         guidedata = []
+        previousstarttime = 0
+        previousduration = 0
         for scheduleList in schedule['scheduleList']:
-            metadata = scheduleList.get('metadata',{})
+            starttime = float(scheduleList['schedule_start'])
+            duration = float(scheduleList['duration'])
+            title = scheduleList.get('title','')
             program = scheduleList.get('program',{})
+            metadata = scheduleList.get('metadata',{})
+            if previousstarttime > 0 and previousstarttime + previousduration < starttime:
+                # fill in the missing schedule data
+                missingstarttime = previousstarttime + previousduration + 1
+                missingduration = starttime - missingstarttime
+                log('buildGuide, ' + self.getTimeForLog(missingstarttime) + ' - ' + self.getTimeForLog(missingstarttime + missingduration) + ': no schedule data')
+                guidedata.append({
+                    'starttime': missingstarttime,
+                    'duration': missingduration,
+                    'mediatype': '',
+                    'label': 'no program data',
+                    'title': 'no program data',
+                    'plot': '',
+                    'genre': '',
+                    'url': url,
+                    'art': art
+                })
+            log('buildGuide, ' + self.getTimeForLog(starttime) + ' - ' + self.getTimeForLog(starttime + duration) + ': ' + title.encode('utf8'))
             guidedata.append({
+                'starttime': starttime,
+                'duration': duration,
                 'mediatype': program.get('type',''),
-                'label': scheduleList.get('title',''),
-                'title': scheduleList.get('title',''),
+                'label': title,
+                'title': title,
                 'plot': metadata.get('description',''),
-                'duration': float(scheduleList['duration']),
                 'genre': metadata.get('genre',''),
                 'url': url,
-                'starttime': float(scheduleList['schedule_start']),
                 'art': art
             })
+            previousstarttime = starttime
+            previousduration = duration
         if len(guidedata) < 1:
-            log('buildGuide, no guide data for channel: ' + str(chname))
-            guidedata.append({
-                'mediatype': 'episode',
-                'label': chname,
-                'title': chname,
-                'plot': '',
-                'duration': float(86400), # 24 hours
-                'genre': chmeta.get('genre',''),
-                'url': url,
-                'starttime': (datetime.datetime.combine(datetime.datetime.today(), datetime.time.min) - datetime.datetime(1970, 1, 1)).total_seconds(), # last midnight
-                'art': art
-            })
+            log('buildGuide, no schedule found')
+            return None
         return {
             'channelname': chname,
             'channelnumber': chnum,
