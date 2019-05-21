@@ -276,7 +276,7 @@ class SlingTV(object):
         return infoLabels, infoArt
 
 
-    @use_cache(1)
+    # @use_cache(1)
     def buildEndpoints(self):
         return (self.getURL(WEB_ENDPOINTS))
         
@@ -658,7 +658,7 @@ class SlingTV(object):
         liz=xbmcgui.ListItem(name)
         if mode == 21: liz.setProperty("IsPlayable","false")
         else: liz.setProperty('IsPlayable', 'true')
-        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","label":name,"title":name})
+        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","title":name})
         else:
             if 'mediatype' in infoList: self.contentType = '%ss'%(infoList['mediatype'])
             liz.setInfo(type="Video", infoLabels=infoList)
@@ -677,7 +677,7 @@ class SlingTV(object):
         log('addDir, name = ' + name)
         liz=xbmcgui.ListItem(name)
         liz.setProperty('IsPlayable', 'false')
-        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","label":name,"title":name})
+        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","title":name})
         else: 
             if 'mediatype' in infoList: self.contentType = '%ss'%(infoList['mediatype'])
             liz.setInfo(type="Video", infoLabels=infoList)
