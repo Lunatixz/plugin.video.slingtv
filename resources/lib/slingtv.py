@@ -20,7 +20,7 @@
 import os, sys, time, _strptime, datetime, re, traceback, pytz, calendar, random, hashlib, xmltodict
 import urlparse, urllib, urllib2, socket, json, requests, base64, inputstreamhelper
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
-                            
+
 from simplecache import SimpleCache, use_cache
 from resources.lib.globals import *
 from .login import UserClient
@@ -29,17 +29,18 @@ socket.setdefaulttimeout(TIMEOUT)
 class SlingTV(object):
     def __init__(self, sysARG):
         log('__init__')
-        self.sysARG      = sysARG
-        self.cache       = SimpleCache()
-        self.endPoints   = self.buildEndpoints()
-        self.user        = UserClient()
+        self.sysARG = sysARG
+        self.cache = SimpleCache()
+        self.endPoints = self.buildEndpoints()
+        self.user = UserClient()
         self.contentType = 'episodes'
-            
-            
+
     def getURL(self, url, header=HEADERS, life=datetime.timedelta(minutes=5), auth=None):
+        url = url.decode(errors='replace')
+        url = url.encode('utf-8')
         try:
             log('getURL, url = ' + url + " | Auth= " + str(auth))
-            cacheresponse = self.cache.get(ADDON_NAME + '.getURL, url = %s'%url)
+            cacheresponse = self.cache.get(ADDON_NAME + '.getURL, url = %s' % url)
             if not cacheresponse:
                 if auth is not None:
                     response = requests.get(url, headers=header, auth=auth, verify=VERIFY)
@@ -50,7 +51,7 @@ class SlingTV(object):
                 if response.status_code == 200:
                     cacheresponse = response.json()
                     if 'message' in cacheresponse: return
-                    self.cache.set(ADDON_NAME + '.getURL, url = %s'%url, dumpJSON(cacheresponse), expiration=life)
+                    self.cache.set(ADDON_NAME + '.getURL, url = %s' % url, dumpJSON(cacheresponse), expiration=life)
                 if 'message' in response.json():
                     notificationDialog(response.json()['message'])
             if isinstance(cacheresponse, basestring):
@@ -60,18 +61,17 @@ class SlingTV(object):
             log("getURL Failed! " + str(e), xbmc.LOGERROR)
             notificationDialog(LANGUAGE(30001))
             return {}
-            
-            
+
     def buildMenu(self):
         response = self.getURL(MAIN_URL)
-        self.addDir(LANGUAGE(30015), '', 'live')
-        self.addDir(LANGUAGE(30017), '', 'vod')
+        self.addDir(LANGUAGE(30015), '', 'live')  # Channels
+        self.addDir(LANGUAGE(30017), '', 'vod')  # On Demand
         for item in response:
             # Omit Rentals for the time being
             if item['title'].lower() == 'rentals': continue
-            self.addDir(item['title'].title(), (item.get('url') or item['id']), item['id'], False, {'thumb':item.get('thumbnail',{}).get('url',ICON)})
+            self.addDir(item['title'].title(), (item.get('url') or item['id']), item['id'], False,
+                        {'thumb': item.get('thumbnail', {}).get('url', ICON)})
 
-            
     def buildOnNow(self, context):
         success, region = self.user.getRegionInfo()
         if not success:
@@ -94,10 +94,9 @@ class SlingTV(object):
                 if response:
                     tile_count = response['total_tiles']
                     if tile_count > 0:
-                        log('buildOnNow, ribbon = ' + str(ribbon['title']))
+                        log('buildOnNow, ribbon = ' + str(ribbon['title'].encode('utf-8')))
                         self.addDir(ribbon['title'], ribbonUrl, 'on_now_item')
 
-                    
     def buildOnNowItems(self, name, ribbonUrl):
         ribbonName = urllib.quote(name)
         log('getRibbonChannels, ribbon = ' + name)
@@ -108,36 +107,91 @@ class SlingTV(object):
             for tile in tiles:
                 log('getRibbonChannels, ribbon = ' + tile['title'].encode("utf-8"))
                 infoLabels, infoArt = self.setAssetInfo(tile)
-                start_time = stringToDate(tile['start_time'], '%Y-%m-%dT%H:%M:%SZ')
-                if start_time < datetime.datetime.utcnow():
-                    self.addLink(infoLabels['label'], tile['qvt'], 'play', infoLabels, infoArt)
-                else:
+                log(str(tile))
+                start_time = None
+                if 'start_time' in tile:
+                    start_time = stringToDate(tile['start_time'], '%Y-%m-%dT%H:%M:%SZ')
+                    qvt_url = tile['qvt']
+                elif tile['availability_type'] == 'svod':
+                    jsonBlock = self.getURL(tile['_href'])
+                    for source in jsonBlock['entitlements']:
+                        start_time = stringToDate(source['playback_start'], '%Y-%m-%dT%H:%M:%SZ')
+                        stop_time = stringToDate(source['playback_stop'], '%Y-%m-%dT%H:%M:%SZ')
+                        qvt_url = source['qvt_url']
+                        if start_time < datetime.datetime.utcnow() < stop_time:
+                           break
+
+
+
+                if start_time is not None and start_time < datetime.datetime.utcnow():
+                    self.addLink(infoLabels['label'], qvt_url, 'play', infoLabels, infoArt)
+                elif start_time is not None:
                     title = 'Upcoming - ' + utcToLocal(start_time).strftime('%m/%d %H:%M') + ' - ' + infoLabels['label']
                     self.addDir(title, '', 'no_play', infoLabels, infoArt)
 
-                
     def buildMyChannels(self):
-        url = '%s/watchlists/v4/watches?product=sling&platform=browser' % (self.endPoints['environments']['production']['cmw_url'])
+        url = '%s/watchlists/v4/watches?product=sling&platform=browser' % (
+        self.endPoints['environments']['production']['cmw_url'])
         myChannels = self.getURL(url, HEADERS, auth=self.user.getAuth())['favorites']
         for fav in myChannels:
-            url = '%s/cms/publish3/channel/schedule/24/1810090400/1/%s.json'%(self.endPoints['environments']['production']['cms_url'], fav['guid'])
+            #url = '%s/cms/publish3/channel/schedule/24/1810090400/1/%s.json' % (
+            #self.endPoints['environments']['production']['cms_url'], fav['guid'])
+            url = fav['_href']
             schedule = self.getURL(url)
-            channel = schedule['schedule']
-            meta = channel['metadata']
-            label = (meta['channel_name'] or meta['title'] or meta['call_sign'])
-            thumb = (channel.get('thumbnail', {}).get('url', '') or ICON)
-            logo = (meta.get('thumbnail_cropped', {}).get('url', '') or ICON)
-            fanart = (meta.get('default_schedule_image', {}).get('url', '') or FANART)
-            infoLabels = {'label': label, 'title': label, 'genre': meta.get('genre', '')}
-            infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, 'logo': logo, 'clearlogo': logo}
-            self.addLink(label, channel['qvt_url'], 'play',infoLabels, infoArt)
+            if 'schedule' in schedule:
+                channel = schedule['schedule']
+                meta = channel['metadata']
+                label = (meta['channel_name'] or meta['title'] or meta['call_sign'])
+                thumb = (channel.get('thumbnail', {}).get('url', '') or ICON)
+                logo = (meta.get('thumbnail_cropped', {}).get('url', '') or ICON)
+                fanart = (meta.get('default_schedule_image', {}).get('url', '') or FANART)
+                infoLabels = {'label': label, 'title': label, 'genre': meta.get('genre', '')}
+                infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, 'logo': logo, 'clearlogo': logo}
+                self.addLink(label, channel['qvt_url'], 'play', infoLabels, infoArt)
 
-            
+
+    def buildMyFavs(self, mode):
+        url = '%s/watchlists/v4/watches?product=sling&platform=browser' % (
+        self.endPoints['environments']['production']['cmw_url'])
+        myFavs = self.getURL(url, HEADERS, auth=self.user.getAuth())['favorites']
+        for fav in myFavs:
+            if mode == 'favorites':
+                if 'title' in fav:
+                    label = fav['title']
+                    thumb = fav['thumbnail']['url']
+                    fanart = thumb
+                    logo = thumb
+                    #logo = item['network_thumbnail']['url']
+                    infoLabels = {'label': label, 'title': label}
+                    infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, 'logo': logo, 'clearlogo': logo}
+                    self.addDir(fav['title'], fav['_href'], 'tv_show', infoLabels, infoArt)
+            else:
+                url = fav['_href']
+                try:
+                    channel = self.getURL(url)
+                    label = (channel['channel_name'] or channel['title'] or channel['call_sign'])
+                    logo = (channel.get('image', {}).get('url', '') or ICON)
+                    thumb = logo
+                    fanart = logo
+                    infoLabels = {'label': label, 'title': label, 'genre': channel.get('genre', '')}
+                    infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, 'logo': logo, 'clearlogo': logo}
+
+                    if channel['has_linear_schedule'] is False:
+                        xbmc.log('add dir')
+                        self.addDir(label, '%s/network' % channel['_href'], 'on_demand', infoLabels, infoArt)
+                    else:
+                        self.addLink(label, channel['qvt'], 'play', infoLabels, infoArt)
+                except:
+                    continue
+
+
     def buildContinueWatching(self):
-        url = '%s/resumes/v4/resumes.json?platform=browser&product=sling' % (self.endPoints['environments']['production']['cmw_url'])
+        url = '%s/resumes/v4/resumes.json?platform=browser&product=sling' % (
+        self.endPoints['environments']['production']['cmw_url'])
         resumes = self.getURL(url, HEADERS, auth=self.user.getAuth(), life=datetime.timedelta(minutes=1))
         for show in resumes:
-            jsonBlock = self.getURL('%s/cms/publish3/asset/info/%s.json' % (self.endPoints['environments']['production']['cms_url'], show['external_id']))
+            jsonBlock = self.getURL('%s/cms/publish3/asset/info/%s.json' % (
+            self.endPoints['environments']['production']['cms_url'], show['external_id']))
             if jsonBlock is None:
                 continue
 
@@ -153,15 +207,14 @@ class SlingTV(object):
                               'resumetime': str(show['position'])}
                 self.addLink(infoLabels['label'], qvt_url, 'play', infoLabels, infoArt, 0, None, properties)
 
-            
     def setAssetInfo(self, jsonBlock, meta=True):
         try:
             channelGuid = jsonBlock['channel']['guid']
         except:
             channelGuid = ''
-            
+
         asset_info = jsonBlock
-        metadata   = jsonBlock
+        metadata = jsonBlock
         if meta and '_href' in jsonBlock:
             try:
                 url = jsonBlock['_href']
@@ -169,7 +222,7 @@ class SlingTV(object):
                 metadata = asset_info['metadata']
             except Exception as e:
                 log("setAssetInfo, extra meta Failed! " + str(e), xbmc.LOGERROR)
-                
+
         # -------------------------------
         # Info Labels
         # -------------------------------
@@ -181,20 +234,20 @@ class SlingTV(object):
             title = metadata['episode_title']
 
         infoLabels = {'label': title, 'title': title}
-        
+
         # -------------------------------
         # Conditional Info
         # -------------------------------
 
         if 'id' in asset_info:
             infoLabels['tracknumber'] = asset_info['id']
-        
+
         if 'year' in asset_info:
             infoLabels['year'] = asset_info['release_year']
-        
+
         if 'duration' in asset_info:
             infoLabels['duration'] = asset_info['duration']
-            
+
         if 'celebrities' in asset_info and 'director' in asset_info['celebrities']:
             infoLabels['director'] = asset_info['celebrities']['director'][0]['display_name']
         elif 'director' in metadata:
@@ -209,8 +262,8 @@ class SlingTV(object):
         if tv_show_title != '':
             infoLabels['tvshowtitle'] = tv_show_title
 
-        type = (jsonBlock.get('type','') or asset_info.get('type','') or metadata.get('type','video'))                   
-        if type == 'movie' or 'Film' in metadata.get('category',''):
+        type = (jsonBlock.get('type', '') or asset_info.get('type', '') or metadata.get('type', 'video'))
+        if type == 'movie' or 'Film' in metadata.get('category', ''):
             infoLabels['mediatype'] = 'movie'
         elif 'episode_number' in metadata:
             if 'episode_season' in metadata:
@@ -218,15 +271,15 @@ class SlingTV(object):
             elif 'season_number' in metadata:
                 infoLabels['season'] = int(metadata['season_number'])
             infoLabels['episode'] = int(metadata['episode_number'])
-            infoLabels['mediatype'] = 'episode'    
+            infoLabels['mediatype'] = 'episode'
         elif 'type' in metadata:
             if metadata['type'] == 'series': infoLabels['mediatype'] = 'tvshow'
         else:
             infoLabels['mediatype'] = 'video'
-            
+
         if 'ratings' in metadata:
             mpaa = metadata['ratings'][0]
-            mpaa = mpaa.replace('US_UPR_','')
+            mpaa = mpaa.replace('US_UPR_', '')
             mpaa = mpaa.replace('US_MPAA_', '')
             infoLabels['mpaa'] = mpaa
 
@@ -237,8 +290,9 @@ class SlingTV(object):
         # Info Art
         # -------------------------------
         thumb = ICON
-        if 'program' in asset_info and 'thumbnail' in asset_info['program'] and asset_info['program']['thumbnail'] is not None:
-                thumb = asset_info['program']['thumbnail']['url']
+        if 'program' in asset_info and 'thumbnail' in asset_info['program'] and asset_info['program'][
+            'thumbnail'] is not None:
+            thumb = asset_info['program']['thumbnail']['url']
         elif 'thumbnail' in asset_info and asset_info['thumbnail'] is not None:
             thumb = asset_info['thumbnail']['url']
 
@@ -275,13 +329,11 @@ class SlingTV(object):
         }
         return infoLabels, infoArt
 
-
     @use_cache(1)
     def buildEndpoints(self):
         return (self.getURL(WEB_ENDPOINTS))
-        
-        
-    #@use_cache(1)
+
+    # @use_cache(1)
     def getChannels(self):
         log('getChannels')
         success, region = self.user.getRegionInfo()
@@ -300,25 +352,24 @@ class SlingTV(object):
             if 'channels' in subpack:
                 for channel in subpack['channels']:
                     yield dict(channel)
-        
-        
+
     def buildLive(self, channel_type):
         log('buildLive')
         channels = self.getChannels()
         for channel in channels:
             log(str(channel))
-            meta   = channel['metadata']
-            label  = (meta.get('channel_name','') or meta.get('title','') or meta.get('call_sign',''))
-            thumb  = (channel.get('thumbnail',{}).get('url','') or ICON)
-            logo   = (meta.get('thumbnail_cropped',{}).get('url','') or ICON)
-            fanart = (meta.get('default_schedule_image',{}).get('url','') or FANART)
+            meta = channel['metadata']
+            label = (meta.get('channel_name', '') or meta.get('title', '') or meta.get('call_sign', ''))
+            thumb = (channel.get('thumbnail', {}).get('url', '') or ICON)
+            logo = (meta.get('thumbnail_cropped', {}).get('url', '') or ICON)
+            fanart = (meta.get('default_schedule_image', {}).get('url', '') or FANART)
             infoLabels = {'label': label, 'title': label, 'genre': meta.get('genre', '')}
-            infoArt    = {'thumb':thumb,'poster':thumb,'fanart':fanart,'logo':logo,'clearlogo':logo}
+            infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, 'logo': logo, 'clearlogo': logo}
             on_demand = False
             on_demand_url = '%s/cms/api/channels/%s/network' % \
                             (self.endPoints['environments']['production']['cms_url'], channel['channel_guid'])
             response = self.getURL(on_demand_url)
-            log('CHANNELRESPONSE => ' +str(response))
+            log('CHANNELRESPONSE => ' + str(response))
             if response is not None and len(response):
                 for category in response:
                     if len(category['tiles']) > 0:
@@ -330,7 +381,6 @@ class SlingTV(object):
                 self.addLink(label, channel['qvt_url'], 'play', infoLabels, infoArt)
 
         xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_LABEL)
-
 
     def buildOnDemand(self, url):
         items = (self.getURL(url))
@@ -349,7 +399,8 @@ class SlingTV(object):
                     infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, 'logo': logo, 'clearlogo': logo}
                     self.addDir(item['title'], item['_href'], 'tv_show', infoLabels, infoArt)
                 else:
-                    jsonBlock = self.getURL('%s/cms/publish3/asset/info/%s.json' % (self.endPoints['environments']['production']['cms_url'], item['external_id']))
+                    jsonBlock = self.getURL('%s/cms/publish3/asset/info/%s.json' % (
+                    self.endPoints['environments']['production']['cms_url'], item['external_id']))
                     if jsonBlock is None:
                         continue
                     start_time = ''
@@ -375,32 +426,40 @@ class SlingTV(object):
             if '_next' in items.keys():
                 self.buildOnDemand(items['_next'])
 
-
     def buildMyTV(self, name, item=None):
-        log('buildMyTV, name = %s'%(name))
+        log('buildMyTV, name = %s' % (name))
         if item is None:
             items = (self.getURL(MYTV))['ribbons']
             for item in items:
                 item['page'] = 0
                 if '_href' not in item:
-                    self.addDir(item['title'], dumpJSON(item), 'my_tv_item', False, {'thumb':'%s/config/shared/images/mytv-icon.png'%(BASE_WEB)})
+                    self.addDir(item['title'], dumpJSON(item), 'my_tv_item', False,
+                                {'thumb': '%s/config/shared/images/mytv-icon.png' % (BASE_WEB)})
                 else:
-                    url = item['_href'].replace('{{','{').replace('}}','}').replace(' ','%20').replace('my_tv_tvod','my_tv')
-                    url = url.format(dma=USER_DMA, timezone_offset=USER_OFFSET, domain='1', product='sling', platform='browser', subscription_pack_ids=USER_SUBS,legacy_subscription_pack_ids=LEGACY_SUBS, page_size='large')
+                    url = item['_href'].replace('{{', '{').replace('}}', '}').replace(' ', '%20').replace('my_tv_tvod',
+                                                                                                          'my_tv')
+                    url = url.format(dma=USER_DMA, timezone_offset=USER_OFFSET, domain='1', product='sling',
+                                     platform='browser', subscription_pack_ids=USER_SUBS,
+                                     legacy_subscription_pack_ids=LEGACY_SUBS, page_size='large')
                     # Check if href is empty so we don't display an empty listitem, cache this for a day or two?
                     response = self.getURL(url, life=datetime.timedelta(days=1))
                     if response:
                         if response['total_tiles'] > 0:
-                            self.addDir(response['title'], dumpJSON(item), 'my_tv_item', False, {'thumb':'%s/config/shared/images/mytv-icon.png'%(BASE_WEB)})
+                            self.addDir(response['title'], dumpJSON(item), 'my_tv_item', False,
+                                        {'thumb': '%s/config/shared/images/mytv-icon.png' % (BASE_WEB)})
         else:
-            page  = item['page']
-            if 'my channels' == item['title'].lower():
-                self.buildMyChannels()
+            page = item['page']
+            if 'my channels' == item['title'].lower() or 'favorites' == item['title'].lower():
+                #self.buildMyChannels()
+                self.buildMyFavs(item['title'].lower())
             elif 'continue watching' == item['title'].lower():
                 self.buildContinueWatching()
             elif '_href' in item:
-                url = item['_href'].replace('{{','{').replace('}}','}').replace('page=0','page=%d'%(page)).replace(' ','%20').replace('my_tv_tvod','my_tv')
-                url = url.format(dma=USER_DMA, timezone_offset=USER_OFFSET, domain='1', product='sling', platform='browser', subscription_pack_ids=USER_SUBS,legacy_subscription_pack_ids=LEGACY_SUBS, page_size='large')
+                url = item['_href'].replace('{{', '{').replace('}}', '}').replace('page=0', 'page=%d' % (page)).replace(
+                    ' ', '%20').replace('my_tv_tvod', 'my_tv')
+                url = url.format(dma=USER_DMA, timezone_offset=USER_OFFSET, domain='1', product='sling',
+                                 platform='browser', subscription_pack_ids=USER_SUBS,
+                                 legacy_subscription_pack_ids=LEGACY_SUBS, page_size='large')
                 log(url)
                 items = (self.getURL(url))
 
@@ -408,37 +467,35 @@ class SlingTV(object):
                     movies = items['tiles']
                     for movie in movies:
                         infoLabels, infoArt = self.setAssetInfo(movie)
-                        self.addLink(infoLabels['label'], movie['qvt'], 'play',infoLabels, infoArt)
+                        self.addLink(infoLabels['label'], movie['qvt'], 'play', infoLabels, infoArt)
                 if 'shows' in item['title'].lower():
                     shows = items['tiles']
                     for show in shows:
-                        infoLabels, infoArt = self.setAssetInfo(show, meta=False) 
+                        infoLabels, infoArt = self.setAssetInfo(show, meta=False)
                         self.addDir(infoLabels['label'], show['_href'], 'tv_show', infoLabels, infoArt)
                 elif items is None:
                     self.addDir(LANGUAGE(30014), '', '')
-                elif items and len(items.get('tiles',[])) == 0:
+                elif items and len(items.get('tiles', [])) == 0:
                     self.addDir(LANGUAGE(30014), '', '')
                 else:
                     shows = items['tiles']
                     for show in shows:
                         infoLabels, infoArt = self.setAssetInfo(show)
-                        self.addLink(infoLabels['label'], show['qvt'], 'play' ,infoLabels, infoArt)
-            
-                    
+                        self.addLink(infoLabels['label'], show['qvt'], 'play', infoLabels, infoArt)
+
+
     def buildShow(self, name, url=None):
-        log('buildShow, name = %s'%(name))
+        log('buildShow, name = %s' % (name))
         item = (self.getURL(url, auth=self.user.getAuth()))
-        seasons = item.get('seasons',[])
+        seasons = item.get('seasons', [])
 
         if seasons:
             self.buildSeasons(seasons)
-
 
     def buildSeasons(self, seasons):
         for season in seasons:
             programs = season['programs']
             self.buildPrograms(programs)
-
 
     def buildPrograms(self, programs):
         for program in programs:
@@ -457,17 +514,17 @@ class SlingTV(object):
             except:
                 continue
 
-            if (start_time > datetime.datetime.utcnow() or datetime.datetime.utcnow() > stop_time) and next_airing_time is None:
+            if (
+                    start_time > datetime.datetime.utcnow() or datetime.datetime.utcnow() > stop_time) and next_airing_time is None:
                 continue
 
             title = program['name']
             infoLabels, infoArt = self.setAssetInfo(airing)
             if next_airing_time is None:
-                self.addLink(title, link, 'play',infoLabels, infoArt, len(programs))
+                self.addLink(title, link, 'play', infoLabels, infoArt, len(programs))
             else:
                 title = 'Next Airing - ' + utcToLocal(next_airing_time).strftime('%m/%d %H:%M') + ' - ' + title
-                self.addDir(title, '', 'no_play',infoLabels, infoArt)
-
+                self.addDir(title, '', 'no_play', infoLabels, infoArt)
 
     def search(self, result_url=None):
         if result_url is None:
@@ -482,15 +539,17 @@ class SlingTV(object):
                     'Accept-Language': 'en-US,en;q=0.9'
                 }
                 tv_results = self.getURL('%s/cms/api/search/v2/franchises/keyword=%s;subpacks=%s;timezone=%s;dma=%s' %
-                                         (self.endPoints['environments']['production']['cms_url'], urllib.quote_plus(keyword),
-                                         base64.b64encode(sortGroup(LEGACY_SUBS.replace('+', ','))), USER_OFFSET, USER_DMA),
+                                         (self.endPoints['environments']['production']['cms_url'],
+                                          urllib.quote_plus(keyword),
+                                          base64.b64encode(sortGroup(LEGACY_SUBS.replace('+', ','))), USER_OFFSET,
+                                          USER_DMA),
                                          header=headers)
                 for item in tv_results['franchises']:
                     label = item['title']
                     thumb = item['image']['url']
                     fanart = thumb
                     infoLabels = {'label': label, 'title': label}
-                    infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart,}
+                    infoArt = {'thumb': thumb, 'poster': thumb, 'fanart': fanart, }
                     self.addDir(item['title'], item['_href'], 'search_result', infoLabels, infoArt)
         else:
             result = self.getURL(result_url)
@@ -501,7 +560,6 @@ class SlingTV(object):
                     self.buildPrograms(result['programs'])
             else:
                 sys.exit()
-
 
     def resolverURL(self, url):
         log('resolverURL, url = ' + url)
@@ -525,14 +583,17 @@ class SlingTV(object):
             elif 'playback' in video and 'asset' in video['playback_info']:
                 channel_id = video['playback_info']['asset']['guid']
             elif 'playback_info' in video and 'vod_info' in video['playback_info']:
-                try: channel_id = video['playback_info']['vod_info']['svod_channels'][0]
-                except: channel_id = ''
+                try:
+                    channel_id = video['playback_info']['vod_info']['svod_channels'][0]
+                except:
+                    channel_id = ''
             else:
                 channel_id = ''
 
             license_key = ''
             if lic_url != '':
-                license_key = '%s||{"env":"production","user_id":"%s","channel_id":"%s","message":[D{SSM}]}|'%(lic_url,self.user.getUserID(), channel_id)
+                license_key = '%s||{"env":"production","user_id":"%s","channel_id":"%s","message":[D{SSM}]}|' % (
+                lic_url, self.user.getUserID(), channel_id)
 
             log('license_key = ' + license_key)
         else:
@@ -595,7 +656,6 @@ class SlingTV(object):
 
         return mpd_url, license_key, asset_id
 
-        
     def playVideo(self, name, url, liz=None):
         log('playVideo, url = ' + url)
         try:
@@ -610,7 +670,7 @@ class SlingTV(object):
             liz = xbmcgui.ListItem(name, path=url)
             liz.setProperty('inputstreamaddon', 'inputstream.adaptive')
             liz.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-            liz.setProperty('inputstream.adaptive.stream_headers', 'User-Agent='+USER_AGENT)
+            liz.setProperty('inputstream.adaptive.stream_headers', 'User-Agent=' + USER_AGENT)
             if license_key != '':
                 liz.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
                 liz.setProperty('inputstream.adaptive.license_key', license_key)
@@ -630,24 +690,25 @@ class SlingTV(object):
 
         if external_id != '':
             while xbmc.Player().isPlayingVideo() and not xbmc.Monitor().abortRequested():
-                position = int(float(xbmc.Player().getTime()))  # Get timestamp of video from VideoPlayer to save as resume time
+                position = int(
+                    float(xbmc.Player().getTime()))  # Get timestamp of video from VideoPlayer to save as resume time
                 duration = int(float(xbmc.Player().getTotalTime()))  # Get the total time of video playing
                 xbmc.Monitor().waitForAbort(3)
 
             self.setResume(external_id, position, duration)
 
-
     def setResume(self, external_id, position, duration):
         # If there's only 2 min left delete the resume point
         if duration - position < 120:
-            url = '%s/resumes/v4/resumes/%s' % (self.endPoints['environments']['production']['cmw_url'], str(external_id))
+            url = '%s/resumes/v4/resumes/%s' % (
+            self.endPoints['environments']['production']['cmw_url'], str(external_id))
             payload = '{"platform":"browser","product":"sling"}'
             requests.delete(url, headers=HEADERS, data=payload, auth=self.user.getAuth(), verify=VERIFY)
         else:
             url = '%s/resumes/v4/resumes' % (self.endPoints['environments']['production']['cmw_url'])
-            payload = '{"external_id":"'+str(external_id)+'","position":'+str(position)+',"duration":'+str(duration)+',"resume_type":"fod","platform":"browser","product":"sling"}'
+            payload = '{"external_id":"' + str(external_id) + '","position":' + str(position) + ',"duration":' + str(
+                duration) + ',"resume_type":"fod","platform":"browser","product":"sling"}'
             requests.put(url, headers=HEADERS, data=payload, auth=self.user.getAuth(), verify=VERIFY)
-
 
     def addLink(self, name, u, mode, infoList=False, infoArt=False, total=0, contextMenu=None, properties=None):
         try:
@@ -655,92 +716,158 @@ class SlingTV(object):
         except:
             pass
         log('addLink, name = ' + name)
-        liz=xbmcgui.ListItem(name)
-        if mode == 21: liz.setProperty("IsPlayable","false")
-        else: liz.setProperty('IsPlayable', 'true')
-        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","label":name,"title":name})
+        liz = xbmcgui.ListItem(name)
+        if mode == 21:
+            liz.setProperty("IsPlayable", "false")
         else:
-            if 'mediatype' in infoList: self.contentType = '%ss'%(infoList['mediatype'])
+            liz.setProperty('IsPlayable', 'true')
+        if infoList == False:
+            liz.setInfo(type="Video", infoLabels={"mediatype": "video", "label": name, "title": name})
+        else:
+            if 'mediatype' in infoList: self.contentType = '%ss' % (infoList['mediatype'])
             liz.setInfo(type="Video", infoLabels=infoList)
-        if infoArt == False: liz.setArt({'thumb':ICON,'fanart':FANART})
-        else: liz.setArt(infoArt)
+        if infoArt == False:
+            liz.setArt({'thumb': ICON, 'fanart': FANART})
+        else:
+            liz.setArt(infoArt)
         if contextMenu is not None: liz.addContextMenuItems(contextMenu)
         if properties is not None:
             for key, value in properties.iteritems():
                 liz.setProperty(key, value)
-        u=self.sysARG[0]+"?url="+urllib.quote_plus(u)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
-        xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]),url=u,listitem=liz,totalItems=total)
-
+        u = self.sysARG[0] + "?url=" + urllib.quote_plus(u) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(name)
+        xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]), url=u, listitem=liz, totalItems=total)
 
     def addDir(self, name, u, mode, infoList=False, infoArt=False):
         name = name.encode("utf-8")
         log('addDir, name = ' + name)
-        liz=xbmcgui.ListItem(name)
+        liz = xbmcgui.ListItem(name)
         liz.setProperty('IsPlayable', 'false')
-        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","label":name,"title":name})
-        else: 
-            if 'mediatype' in infoList: self.contentType = '%ss'%(infoList['mediatype'])
+        if infoList == False:
+            liz.setInfo(type="Video", infoLabels={"mediatype": "video", "label": name, "title": name})
+        else:
+            if 'mediatype' in infoList: self.contentType = '%ss' % (infoList['mediatype'])
             liz.setInfo(type="Video", infoLabels=infoList)
-        if infoArt == False: liz.setArt({'thumb':ICON,'fanart':FANART})
-        else: liz.setArt(infoArt)
-        u=self.sysARG[0]+"?url="+urllib.quote_plus(u)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
-        xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]),url=u,listitem=liz,isFolder=True)
+        if infoArt == False:
+            liz.setArt({'thumb': ICON, 'fanart': FANART})
+        else:
+            liz.setArt(infoArt)
+        u = self.sysARG[0] + "?url=" + urllib.quote_plus(u) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(name)
+        xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]), url=u, listitem=liz, isFolder=True)
 
-    
-    def getLineup(self, days=1):
-        return []
-    
-    
+    def getSchedule(self, channel):
+        if channel.get('metadata', {}).get('has_linear_schedule', True) == False:
+            log('getSchedule, skipping channel with no linear schedule: ' + self.getChannelName(channel))
+            return {}  # don't request schedule for this channel
+        utcdate = datetime.datetime.utcnow().strftime("%y%m%d") + '0000'
+        scheduleURL = '%s/cms/publish3/channel/schedule/24/%s/1/{}.json' % \
+                      (self.endPoints['environments']['production']['cms_url'], utcdate)
+        scheduleURL = scheduleURL.format(channel['channel_guid'])
+        log('getSchedule, calling getURL for ' + str(self.getChannelName(channel)))
+        response = self.getURL(scheduleURL)
+        if response and 'schedule' in response:
+            return response['schedule']
+        else:
+            return {}
+
+    # support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
     def uEPG(self):
         log('uEPG')
-        #support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
         channels = self.getChannels()
-        lineups  = self.getLineup()
-        return poolList(self.buildGuide, [(idx + 1, channel, lineups) for idx, channel in enumerate(channels)])
-        
-        
+        return poolList(self.buildGuide,
+                        [(idx + 1, channel, self.getSchedule(channel)) for idx, channel in enumerate(channels)])
+
+    def getChannelName(self, channel):
+        chmeta = channel.get('metadata', {})
+        chname = (chmeta.get('channel_name', '') or chmeta.get('title', '') or chmeta.get('call_sign', ''))
+        return chname
+
+    def getTimeForLog(self, time):
+        return datetime.datetime.fromtimestamp(time).strftime("%a %H:%M")
+
     def buildGuide(self, data):
-        chnum, channel, listings = data
-        meta       = channel['metadata']
-        chname     = (meta.get('channel_name','') or meta.get('title','') or meta.get('call_sign',''))
-        link       = channel['qvt_url']
-        chlogo     = (meta.get('thumbnail_cropped',{}).get('url','') or ICON)
-        newChannel = {}
-        guidedata  = []
-        newChannel['channelname']   = chname
-        newChannel['channelnumber'] = chnum
-        newChannel['channellogo']   = chlogo
-        newChannel['isfavorite']    = random.choice([True, False])
-        #dummy info for testing
-        starttime  = time.time()
-        for listing in range(24):
-            label  = chname
-            thumb  = (channel.get('thumbnail',{}).get('url','') or chlogo or ICON)
-            fanart = (meta.get('default_schedule_image',{}).get('url','') or FANART)
-            plot   = 'Plot Placeholder'
-            genre  = meta.get('genre','')
-            dur    = random.choice([1800,3600,7200])
-            starttime = starttime + dur
-            tmpdata = {"mediatype":"episode","label":label ,"title":label,"plot":plot,"duration":dur,"genre":genre}
-            tmpdata['url'] = self.sysARG[0]+'?mode=play&name=%s&url=%s'%(label,link)
-            tmpdata['starttime'] = starttime
-            tmpdata['art'] = {"thumb":thumb,"poster":thumb,"fanart":FANART,"icon":chlogo,"clearlogo":chlogo}
-            guidedata.append(tmpdata)
-        newChannel['guidedata'] = guidedata
-        return newChannel        
-    
-    
+        chnum, channel, schedule = data
+        chname = self.getChannelName(channel)
+        log('buildGuide for channel: ' + chname)
+        if channel.get('metadata', {}).get('has_linear_schedule', True) == False:
+            log('buildGuide, on demand only')
+            return None
+        chmeta = channel['metadata']
+        link = channel['qvt_url']
+        chlogo = (chmeta.get('thumbnail_cropped', {}).get('url', '') or ICON)
+        thumb = (channel.get('thumbnail', {}).get('url', '') or chlogo or ICON)
+        fanart = (chmeta.get('default_schedule_image', {}).get('url', '') or FANART)
+        url = self.sysARG[0] + '?mode=play&name=%s&url=%s' % (chname, link)
+        art = {
+            'thumb': thumb,
+            'poster': thumb,
+            'fanart': fanart,
+            'icon': chlogo,
+            'clearlogo': chlogo
+        }
+        currenttime = time.time()
+        guidedata = []
+        previousstarttime = 0
+        previousduration = 0
+        for scheduleList in schedule['scheduleList']:
+            starttime = float(scheduleList['schedule_start'])
+            duration = float(scheduleList['duration'])
+            title = scheduleList.get('title', '')
+            program = scheduleList.get('program', {})
+            metadata = scheduleList.get('metadata', {})
+            if previousstarttime > 0 and previousstarttime + previousduration < starttime:
+                # fill in the missing schedule data
+                missingstarttime = previousstarttime + previousduration + 1
+                missingduration = starttime - missingstarttime
+                log('buildGuide, ' + self.getTimeForLog(missingstarttime) + ' - ' + self.getTimeForLog(
+                    missingstarttime + missingduration) + ': no schedule data')
+                guidedata.append({
+                    'starttime': missingstarttime,
+                    'duration': missingduration,
+                    'mediatype': '',
+                    'label': 'no program data',
+                    'title': 'no program data',
+                    'plot': '',
+                    'genre': '',
+                    'url': url,
+                    'art': art
+                })
+            log('buildGuide, ' + self.getTimeForLog(starttime) + ' - ' + self.getTimeForLog(
+                starttime + duration) + ': ' + title.encode('utf8'))
+            guidedata.append({
+                'starttime': starttime,
+                'duration': duration,
+                'mediatype': program.get('type', ''),
+                'label': title,
+                'title': title,
+                'plot': metadata.get('description', ''),
+                'genre': metadata.get('genre', ''),
+                'url': url,
+                'art': art
+            })
+            previousstarttime = starttime
+            previousduration = duration
+        if len(guidedata) < 1:
+            log('buildGuide, no schedule found')
+            return None
+        return {
+            'channelname': chname,
+            'channelnumber': chnum,
+            'channellogo': chlogo,
+            'isfavorite': False,
+            'guidedata': guidedata
+        }
+
     def getParams(self):
         return dict(urlparse.parse_qsl(self.sysARG[2][1:]))
 
-        
     def run(self):
         global LOGIN_URL, USER_SUBS
-        cache  = True
+        cache = True
         update = False
         params = self.getParams()
 
-        LOGIN_URL = self.endPoints['environments']['production_noplay']['micro_ums_url'] + '/sling-api/oauth/authenticate-user'
+        LOGIN_URL = self.endPoints['environments']['production_noplay'][
+                        'micro_ums_url'] + '/sling-api/oauth/authenticate-user'
         loggedIn, message = self.user.logIn(LOGIN_URL, USER_EMAIL, USER_PASSWORD)
         log("Sling Class is logIn() ==> Success: " + str(loggedIn) + " | Message: " + message)
         if loggedIn:
@@ -752,44 +879,66 @@ class SlingTV(object):
         else:
             sys.exit()
 
-        try: url=urllib.unquote(params["url"])
-        except: url=None
-        try: name=urllib.unquote_plus(params["name"])
-        except: name=None
-        try:  
-            mode=params["mode"]
-            if mode.isdigit(): mode=int(mode)
-        except: mode=None
-        log("Mode: "+str(mode))
-        log("URL : "+str(url))
-        log("Name: "+str(name))
+        try:
+            url = urllib.unquote(params["url"])
+        except:
+            url = None
+        try:
+            name = urllib.unquote_plus(params["name"])
+        except:
+            name = None
+        try:
+            mode = params["mode"]
+            if mode.isdigit(): mode = int(mode)
+        except:
+            mode = None
+        log("Mode: " + str(mode))
+        log("URL : " + str(url))
+        log("Name: " + str(name))
 
-        if mode is None:  self.buildMenu()
-        elif mode == 'live': self.buildLive('live')
-        elif mode == 'vod': self.buildLive('vod')
-        elif mode == 'my_tv': self.buildMyTV(name)
-        elif mode == 'my_tv_item': self.buildMyTV(name, loadJSON(url))
-        elif mode == 'search': self.search()
-        elif mode == 'search_result': self.search(url)
-        elif mode == 'tv_show': self.buildShow(name, url)
-        elif mode == 'play': self.playVideo(name, url)
-        elif mode == 'no_play': sys.exit()
-        elif mode == 'on_demand': self.buildOnDemand(url)
-        elif mode == 'on_now' or mode == 'sports': self.buildOnNow(mode)
-        elif mode == 'on_now_item': 
+        if mode is None:
+            self.buildMenu()
+        elif mode == 'live':
+            self.buildLive('live')
+        elif mode == 'vod':
+            self.buildLive('vod')
+        elif mode == 'my_tv':
+            self.buildMyTV(name)
+        elif mode == 'my_tv_item':
+            self.buildMyTV(name, loadJSON(url))
+        elif mode == 'search':
+            self.search()
+        elif mode == 'search_result':
+            self.search(url)
+        elif mode == 'tv_show':
+            self.buildShow(name, url)
+        elif mode == 'play':
+            self.playVideo(name, url)
+        elif mode == 'no_play':
+            sys.exit()
+        elif mode == 'on_demand':
+            self.buildOnDemand(url)
+        elif mode == 'on_now' or mode == 'sports':
+            self.buildOnNow(mode)
+        elif mode == 'on_now_item':
             self.buildOnNowItems(name, url)
             cache = False
-        elif mode == 'logout': self.user.logOut()
-        elif mode == 'settings': 
+        elif mode == 'logout':
+            self.user.logOut()
+        elif mode == 'settings':
             REAL_SETTINGS.openSettings(), self.buildMenu()
             update = True
-        elif mode == 'guide': 
+        elif mode == 'guide':
             cache = False
-            xbmc.executebuiltin("RunScript(script.module.uepg,json=%s&skin_path=%s&refresh_path=%s&refresh_interval=%s&row_count=%s)"%(urllib.quote(json.dumps(list(self.uEPG()))),urllib.quote(json.dumps(ADDON_PATH)),urllib.quote(json.dumps(sys.argv[0]+"?mode=20")),urllib.quote(json.dumps("7200")),urllib.quote(json.dumps("5"))))
+            xbmc.executebuiltin(
+                "RunScript(script.module.uepg,json=%s&skin_path=%s&refresh_path=%s&refresh_interval=%s&row_count=%s)" % (
+                urllib.quote(json.dumps(list(self.uEPG()))), urllib.quote(json.dumps(ADDON_PATH)),
+                urllib.quote(json.dumps(sys.argv[0] + "?mode=20")), urllib.quote(json.dumps("7200")),
+                urllib.quote(json.dumps("5"))))
 
-        xbmcplugin.setContent(int(self.sysARG[1])    , self.contentType)
-        xbmcplugin.addSortMethod(int(self.sysARG[1]) , xbmcplugin.SORT_METHOD_UNSORTED)
-        xbmcplugin.addSortMethod(int(self.sysARG[1]) , xbmcplugin.SORT_METHOD_NONE)
-        xbmcplugin.addSortMethod(int(self.sysARG[1]) , xbmcplugin.SORT_METHOD_LABEL)
-        xbmcplugin.addSortMethod(int(self.sysARG[1]) , xbmcplugin.SORT_METHOD_TITLE)
+        xbmcplugin.setContent(int(self.sysARG[1]), self.contentType)
+        xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_UNSORTED)
+        xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_NONE)
+        xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_LABEL)
+        xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_TITLE)
         xbmcplugin.endOfDirectory(int(self.sysARG[1]), updateListing=update, cacheToDisc=cache)
