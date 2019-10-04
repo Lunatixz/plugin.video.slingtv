@@ -34,9 +34,9 @@ class SlingTV(object):
         self.endPoints   = self.buildEndpoints()
         self.user        = UserClient()
         self.contentType = 'episodes'
-            
-            
-    def getURL(self, url, header=HEADERS, life=datetime.timedelta(minutes=5), auth=None):
+
+
+    def getURL(self, url, header=HEADERS, life=datetime.timedelta(minutes=5), auth=None, msg=True):
         try:
             log('getURL, url = ' + url + " | Auth= " + str(auth))
             cacheresponse = self.cache.get(ADDON_NAME + '.getURL, url = %s'%url)
@@ -51,7 +51,7 @@ class SlingTV(object):
                     cacheresponse = response.json()
                     if 'message' in cacheresponse: return
                     self.cache.set(ADDON_NAME + '.getURL, url = %s'%url, dumpJSON(cacheresponse), expiration=life)
-                if 'message' in response.json():
+                if 'message' in response.json() and msg:
                     notificationDialog(response.json()['message'])
             if isinstance(cacheresponse, basestring):
                 cacheresponse = loadJSON(cacheresponse)
@@ -317,17 +317,29 @@ class SlingTV(object):
             on_demand = False
             on_demand_url = '%s/cms/api/channels/%s/network' % \
                             (self.endPoints['environments']['production']['cms_url'], channel['channel_guid'])
-            response = self.getURL(on_demand_url)
-            log('CHANNELRESPONSE => ' +str(response))
+            response = self.getURL(on_demand_url, msg=False)
+            # log('CHANNELRESPONSE => ' +str(response))
             if response is not None and len(response):
                 for category in response:
                     if len(category['tiles']) > 0:
                         on_demand = True
                         break
-            if channel_type == 'vod' and on_demand:
-                self.addDir(label, on_demand_url, 'on_demand', infoLabels, infoArt)
-            else:
-                self.addLink(label, channel['qvt_url'], 'play', infoLabels, infoArt)
+
+            response = self.getURL(channel['qvt_url'], msg=False)
+            if response is not None:
+                if 'playback_info' in response:
+                    if 'asset' in response['playback_info']:
+                        if 'episode_title' in response['playback_info']['asset']:
+                            if response['playback_info']['asset']['title'] != response['playback_info']['asset']['episode_title']:
+                                infoLabels['plot'] = ('%s - %s' % (response['playback_info']['asset']['title'],
+                                                                   response['playback_info']['asset']['episode_title']))
+                            else:
+                                infoLabels['plot'] = response['playback_info']['asset']['title']
+
+                if channel_type == 'vod' and on_demand:
+                    self.addDir(label, on_demand_url, 'on_demand', infoLabels, infoArt)
+                else:
+                    self.addLink(label, channel['qvt_url'], 'play', infoLabels, infoArt)
 
         xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_LABEL)
 
