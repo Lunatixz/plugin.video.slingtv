@@ -35,9 +35,7 @@ class SlingTV(object):
         self.user = UserClient()
         self.contentType = 'episodes'
 
-    def getURL(self, url, header=HEADERS, life=datetime.timedelta(minutes=5), auth=None):
-        url = url.decode(errors='replace')
-        url = url.encode('utf-8')
+    def getURL(self, url, header=HEADERS, life=datetime.timedelta(minutes=5), auth=None, msg=True):
         try:
             log('getURL, url = ' + url + " | Auth= " + str(auth))
             cacheresponse = self.cache.get(ADDON_NAME + '.getURL, url = %s' % url)
@@ -51,8 +49,8 @@ class SlingTV(object):
                 if response.status_code == 200:
                     cacheresponse = response.json()
                     if 'message' in cacheresponse: return
-                    self.cache.set(ADDON_NAME + '.getURL, url = %s' % url, dumpJSON(cacheresponse), expiration=life)
-                if 'message' in response.json():
+                    self.cache.set(ADDON_NAME + '.getURL, url = %s'%url, dumpJSON(cacheresponse), expiration=life)
+                if 'message' in response.json() and msg:
                     notificationDialog(response.json()['message'])
             if isinstance(cacheresponse, basestring):
                 cacheresponse = loadJSON(cacheresponse)
@@ -64,8 +62,8 @@ class SlingTV(object):
 
     def buildMenu(self):
         response = self.getURL(MAIN_URL)
-        self.addDir(LANGUAGE(30015), '', 'live')  # Channels
-        self.addDir(LANGUAGE(30017), '', 'vod')  # On Demand
+        self.addDir(LANGUAGE(30015), '', 'live') # Channels
+        self.addDir(LANGUAGE(30017), '', 'vod') # On Demand
         for item in response:
             # Omit Rentals for the time being
             if item['title'].lower() == 'rentals': continue
@@ -329,7 +327,7 @@ class SlingTV(object):
         }
         return infoLabels, infoArt
 
-    @use_cache(1)
+    # @use_cache(1)
     def buildEndpoints(self):
         return (self.getURL(WEB_ENDPOINTS))
 
@@ -368,17 +366,30 @@ class SlingTV(object):
             on_demand = False
             on_demand_url = '%s/cms/api/channels/%s/network' % \
                             (self.endPoints['environments']['production']['cms_url'], channel['channel_guid'])
-            response = self.getURL(on_demand_url)
-            log('CHANNELRESPONSE => ' + str(response))
+
+            response = self.getURL(on_demand_url, msg=False)
+            # log('CHANNELRESPONSE => ' +str(response))
             if response is not None and len(response):
                 for category in response:
                     if len(category['tiles']) > 0:
                         on_demand = True
                         break
-            if channel_type == 'vod' and on_demand:
-                self.addDir(label, on_demand_url, 'on_demand', infoLabels, infoArt)
-            else:
-                self.addLink(label, channel['qvt_url'], 'play', infoLabels, infoArt)
+
+            response = self.getURL(channel['qvt_url'], msg=False)
+            if response is not None:
+                if 'playback_info' in response:
+                    if 'asset' in response['playback_info']:
+                        if 'episode_title' in response['playback_info']['asset']:
+                            if response['playback_info']['asset']['title'] != response['playback_info']['asset']['episode_title']:
+                                infoLabels['plot'] = ('%s - %s' % (response['playback_info']['asset']['title'],
+                                                                   response['playback_info']['asset']['episode_title']))
+                            else:
+                                infoLabels['plot'] = response['playback_info']['asset']['title']
+
+                if channel_type == 'vod' and on_demand:
+                    self.addDir(label, on_demand_url, 'on_demand', infoLabels, infoArt)
+                else:
+                    self.addLink(label, channel['qvt_url'], 'play', infoLabels, infoArt)
 
         xbmcplugin.addSortMethod(int(self.sysARG[1]), xbmcplugin.SORT_METHOD_LABEL)
 
@@ -716,13 +727,10 @@ class SlingTV(object):
         except:
             pass
         log('addLink, name = ' + name)
-        liz = xbmcgui.ListItem(name)
-        if mode == 21:
-            liz.setProperty("IsPlayable", "false")
-        else:
-            liz.setProperty('IsPlayable', 'true')
-        if infoList == False:
-            liz.setInfo(type="Video", infoLabels={"mediatype": "video", "label": name, "title": name})
+        liz=xbmcgui.ListItem(name)
+        if mode == 21: liz.setProperty("IsPlayable","false")
+        else: liz.setProperty('IsPlayable', 'true')
+        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","title":name})
         else:
             if 'mediatype' in infoList: self.contentType = '%ss' % (infoList['mediatype'])
             liz.setInfo(type="Video", infoLabels=infoList)
@@ -742,22 +750,22 @@ class SlingTV(object):
         log('addDir, name = ' + name)
         liz = xbmcgui.ListItem(name)
         liz.setProperty('IsPlayable', 'false')
-        if infoList == False:
-            liz.setInfo(type="Video", infoLabels={"mediatype": "video", "label": name, "title": name})
-        else:
-            if 'mediatype' in infoList: self.contentType = '%ss' % (infoList['mediatype'])
+        
+        if infoList == False: liz.setInfo(type="Video", infoLabels={"mediatype":"video","title":name})
+        else: 
+            if 'mediatype' in infoList: self.contentType = '%ss'%(infoList['mediatype'])
             liz.setInfo(type="Video", infoLabels=infoList)
-        if infoArt == False:
-            liz.setArt({'thumb': ICON, 'fanart': FANART})
-        else:
-            liz.setArt(infoArt)
-        u = self.sysARG[0] + "?url=" + urllib.quote_plus(u) + "&mode=" + str(mode) + "&name=" + urllib.quote_plus(name)
-        xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]), url=u, listitem=liz, isFolder=True)
+        if infoArt == False: liz.setArt({'thumb':ICON,'fanart':FANART})
+        else: liz.setArt(infoArt)
+        u=self.sysARG[0]+"?url="+urllib.quote_plus(u)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
+        xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]),url=u,listitem=liz,isFolder=True)
 
+    
     def getSchedule(self, channel):
-        if channel.get('metadata', {}).get('has_linear_schedule', True) == False:
+        if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
             log('getSchedule, skipping channel with no linear schedule: ' + self.getChannelName(channel))
-            return {}  # don't request schedule for this channel
+            return {} # don't request schedule for this channel
+
         utcdate = datetime.datetime.utcnow().strftime("%y%m%d") + '0000'
         scheduleURL = '%s/cms/publish3/channel/schedule/24/%s/1/{}.json' % \
                       (self.endPoints['environments']['production']['cms_url'], utcdate)
@@ -769,34 +777,36 @@ class SlingTV(object):
         else:
             return {}
 
-    # support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
+    #support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
     def uEPG(self):
         log('uEPG')
         channels = self.getChannels()
-        return poolList(self.buildGuide,
-                        [(idx + 1, channel, self.getSchedule(channel)) for idx, channel in enumerate(channels)])
+        return poolList(self.buildGuide, [(idx + 1, channel, self.getSchedule(channel)) for idx, channel in enumerate(channels)])
+        
 
     def getChannelName(self, channel):
-        chmeta = channel.get('metadata', {})
-        chname = (chmeta.get('channel_name', '') or chmeta.get('title', '') or chmeta.get('call_sign', ''))
+        chmeta = channel.get('metadata',{})
+        chname = (chmeta.get('channel_name','') or chmeta.get('title','') or chmeta.get('call_sign',''))
         return chname
 
     def getTimeForLog(self, time):
         return datetime.datetime.fromtimestamp(time).strftime("%a %H:%M")
 
+    
     def buildGuide(self, data):
         chnum, channel, schedule = data
         chname = self.getChannelName(channel)
         log('buildGuide for channel: ' + chname)
-        if channel.get('metadata', {}).get('has_linear_schedule', True) == False:
+        if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
             log('buildGuide, on demand only')
             return None
         chmeta = channel['metadata']
-        link = channel['qvt_url']
-        chlogo = (chmeta.get('thumbnail_cropped', {}).get('url', '') or ICON)
-        thumb = (channel.get('thumbnail', {}).get('url', '') or chlogo or ICON)
-        fanart = (chmeta.get('default_schedule_image', {}).get('url', '') or FANART)
-        url = self.sysARG[0] + '?mode=play&name=%s&url=%s' % (chname, link)
+        link   = channel['qvt_url']
+        chlogo = (chmeta.get('thumbnail_cropped',{}).get('url','') or ICON)
+        thumb  = (channel.get('thumbnail',{}).get('url','') or chlogo or ICON)
+        fanart = (chmeta.get('default_schedule_image',{}).get('url','') or FANART)
+        url    = self.sysARG[0]+'?mode=play&name=%s&url=%s'%(chname, link)
+
         art = {
             'thumb': thumb,
             'poster': thumb,
@@ -811,15 +821,16 @@ class SlingTV(object):
         for scheduleList in schedule['scheduleList']:
             starttime = float(scheduleList['schedule_start'])
             duration = float(scheduleList['duration'])
-            title = scheduleList.get('title', '')
-            program = scheduleList.get('program', {})
-            metadata = scheduleList.get('metadata', {})
+            title = scheduleList.get('title','')
+            program = scheduleList.get('program',{})
+            metadata = scheduleList.get('metadata',{})
+
             if previousstarttime > 0 and previousstarttime + previousduration < starttime:
                 # fill in the missing schedule data
                 missingstarttime = previousstarttime + previousduration + 1
                 missingduration = starttime - missingstarttime
-                log('buildGuide, ' + self.getTimeForLog(missingstarttime) + ' - ' + self.getTimeForLog(
-                    missingstarttime + missingduration) + ': no schedule data')
+
+                log('buildGuide, ' + self.getTimeForLog(missingstarttime) + ' - ' + self.getTimeForLog(missingstarttime + missingduration) + ': no schedule data')
                 guidedata.append({
                     'starttime': missingstarttime,
                     'duration': missingduration,
@@ -831,16 +842,16 @@ class SlingTV(object):
                     'url': url,
                     'art': art
                 })
-            log('buildGuide, ' + self.getTimeForLog(starttime) + ' - ' + self.getTimeForLog(
-                starttime + duration) + ': ' + title.encode('utf8'))
+  
+            log('buildGuide, ' + self.getTimeForLog(starttime) + ' - ' + self.getTimeForLog(starttime + duration) + ': ' + title.encode('utf8'))
             guidedata.append({
                 'starttime': starttime,
                 'duration': duration,
-                'mediatype': program.get('type', ''),
+                'mediatype': program.get('type',''),
                 'label': title,
                 'title': title,
-                'plot': metadata.get('description', ''),
-                'genre': metadata.get('genre', ''),
+                'plot': metadata.get('description',''),
+                'genre': metadata.get('genre',''),
                 'url': url,
                 'art': art
             })
