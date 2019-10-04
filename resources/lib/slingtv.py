@@ -64,8 +64,8 @@ class SlingTV(object):
             
     def buildMenu(self):
         response = self.getURL(MAIN_URL)
-        self.addDir(LANGUAGE(30015), '', 'live')
-        self.addDir(LANGUAGE(30017), '', 'vod')
+        self.addDir(LANGUAGE(30015), '', 'live') # Channels
+        self.addDir(LANGUAGE(30017), '', 'vod') # On Demand
         for item in response:
             # Omit Rentals for the time being
             if item['title'].lower() == 'rentals': continue
@@ -699,47 +699,109 @@ class SlingTV(object):
         xbmcplugin.addDirectoryItem(handle=int(self.sysARG[1]),url=u,listitem=liz,isFolder=True)
 
     
-    def getLineup(self, days=1):
-        return []
+    def getSchedule(self, channel):
+        if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
+            log('getSchedule, skipping channel with no linear schedule: ' + self.getChannelName(channel))
+            return {} # don't request schedule for this channel
+        utcdate = datetime.datetime.utcnow().strftime("%y%m%d") + '0000'
+        scheduleURL = '%s/cms/publish3/channel/schedule/24/%s/1/{}.json' % \
+                      (self.endPoints['environments']['production']['cms_url'], utcdate)
+        scheduleURL = scheduleURL.format(channel['channel_guid'])
+        log('getSchedule, calling getURL for ' + str(self.getChannelName(channel)))
+        response = self.getURL(scheduleURL)
+        if response and 'schedule' in response:
+            return response['schedule']
+        else:
+            return {}
+
     
-    
+    #support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
     def uEPG(self):
         log('uEPG')
-        #support for uEPG universal epg framework module available from the Kodi repository. https://github.com/Lunatixz/KODI_Addons/tree/master/script.module.uepg
         channels = self.getChannels()
-        lineups  = self.getLineup()
-        return poolList(self.buildGuide, [(idx + 1, channel, lineups) for idx, channel in enumerate(channels)])
+        return poolList(self.buildGuide, [(idx + 1, channel, self.getSchedule(channel)) for idx, channel in enumerate(channels)])
         
+
+    def getChannelName(self, channel):
+        chmeta = channel.get('metadata',{})
+        chname = (chmeta.get('channel_name','') or chmeta.get('title','') or chmeta.get('call_sign',''))
+        return chname
         
+
+    def getTimeForLog(self, time):
+        return datetime.datetime.fromtimestamp(time).strftime("%a %H:%M")
+
+
     def buildGuide(self, data):
-        chnum, channel, listings = data
-        meta       = channel['metadata']
-        chname     = (meta.get('channel_name','') or meta.get('title','') or meta.get('call_sign',''))
-        link       = channel['qvt_url']
-        chlogo     = (meta.get('thumbnail_cropped',{}).get('url','') or ICON)
-        newChannel = {}
-        guidedata  = []
-        newChannel['channelname']   = chname
-        newChannel['channelnumber'] = chnum
-        newChannel['channellogo']   = chlogo
-        newChannel['isfavorite']    = random.choice([True, False])
-        #dummy info for testing
-        starttime  = time.time()
-        for listing in range(24):
-            label  = chname
-            thumb  = (channel.get('thumbnail',{}).get('url','') or chlogo or ICON)
-            fanart = (meta.get('default_schedule_image',{}).get('url','') or FANART)
-            plot   = 'Plot Placeholder'
-            genre  = meta.get('genre','')
-            dur    = random.choice([1800,3600,7200])
-            starttime = starttime + dur
-            tmpdata = {"mediatype":"episode","label":label ,"title":label,"plot":plot,"duration":dur,"genre":genre}
-            tmpdata['url'] = self.sysARG[0]+'?mode=play&name=%s&url=%s'%(label,link)
-            tmpdata['starttime'] = starttime
-            tmpdata['art'] = {"thumb":thumb,"poster":thumb,"fanart":FANART,"icon":chlogo,"clearlogo":chlogo}
-            guidedata.append(tmpdata)
-        newChannel['guidedata'] = guidedata
-        return newChannel        
+        chnum, channel, schedule = data
+        chname = self.getChannelName(channel)
+        log('buildGuide for channel: ' + chname)
+        if channel.get('metadata',{}).get('has_linear_schedule', True) == False:
+            log('buildGuide, on demand only')
+            return None
+        chmeta = channel['metadata']
+        link   = channel['qvt_url']
+        chlogo = (chmeta.get('thumbnail_cropped',{}).get('url','') or ICON)
+        thumb  = (channel.get('thumbnail',{}).get('url','') or chlogo or ICON)
+        fanart = (chmeta.get('default_schedule_image',{}).get('url','') or FANART)
+        url    = self.sysARG[0]+'?mode=play&name=%s&url=%s'%(chname, link)
+        art = {
+            'thumb': thumb,
+            'poster': thumb,
+            'fanart': fanart,
+            'icon': chlogo,
+            'clearlogo': chlogo
+        }
+        currenttime = time.time()
+        guidedata = []
+        previousstarttime = 0
+        previousduration = 0
+        for scheduleList in schedule['scheduleList']:
+            starttime = float(scheduleList['schedule_start'])
+            duration = float(scheduleList['duration'])
+            title = scheduleList.get('title','')
+            program = scheduleList.get('program',{})
+            metadata = scheduleList.get('metadata',{})
+            if previousstarttime > 0 and previousstarttime + previousduration < starttime:
+                # fill in the missing schedule data
+                missingstarttime = previousstarttime + previousduration + 1
+                missingduration = starttime - missingstarttime
+                log('buildGuide, ' + self.getTimeForLog(missingstarttime) + ' - ' + self.getTimeForLog(missingstarttime + missingduration) + ': no schedule data')
+                guidedata.append({
+                    'starttime': missingstarttime,
+                    'duration': missingduration,
+                    'mediatype': '',
+                    'label': 'no program data',
+                    'title': 'no program data',
+                    'plot': '',
+                    'genre': '',
+                    'url': url,
+                    'art': art
+                })
+            log('buildGuide, ' + self.getTimeForLog(starttime) + ' - ' + self.getTimeForLog(starttime + duration) + ': ' + title.encode('utf8'))
+            guidedata.append({
+                'starttime': starttime,
+                'duration': duration,
+                'mediatype': program.get('type',''),
+                'label': title,
+                'title': title,
+                'plot': metadata.get('description',''),
+                'genre': metadata.get('genre',''),
+                'url': url,
+                'art': art
+            })
+            previousstarttime = starttime
+            previousduration = duration
+        if len(guidedata) < 1:
+            log('buildGuide, no schedule found')
+            return None
+        return {
+            'channelname': chname,
+            'channelnumber': chnum,
+            'channellogo': chlogo,
+            'isfavorite': False,
+            'guidedata': guidedata
+        }
     
     
     def getParams(self):
